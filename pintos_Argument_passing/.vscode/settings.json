@@ -1,0 +1,8 @@
+{
+    "files.associations": {
+        "malloc.h": "c",
+        "directory.h": "c",
+        "filesys.h": "c",
+        "free-map.h": "c"
+    }
+}
