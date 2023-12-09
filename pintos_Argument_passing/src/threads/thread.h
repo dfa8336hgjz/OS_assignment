@@ -4,8 +4,6 @@
 #include <debug.h>
 #include <list.h>
 #include <stdint.h>
-#include "synch.h"
-#include "fixed_point.h"
 
 /* States in a thread's life cycle. */
 enum thread_status
@@ -95,24 +93,27 @@ struct thread
     /* Shared between thread.c and synch.c. */
     struct list_elem elem;              /* List element. */
 
+#ifdef USERPROG
     /* Owned by userprog/process.c. */
-    uint32_t *pagedir;                  /* Page directory. */
-
+    uint32_t *pagedir;    
+    int child_lockk;              /* Page directory. */
+    int mem_lock;
+    struct semaphore* child_lock;
+    //struct semaphore* mem_lock;
+    struct list child;
+    struct list_elem child_elem;
+    int exit_status;
+    struct file* fd[128];
+#endif
 
     /* Owned by thread.c. */
     unsigned magic;                     /* Detects stack overflow. */
-
-    int64_t ticks_blocked;              /* Record the time the thread has been blocked. */
-    struct lock *lock_waiting;          /* The lock that the thread is waiting for. */
-    int nice;                           /* Niceness. */
-    fixed_t recent_cpu;                 /* Recent CPU. */
   };
 
 /* If false (default), use round-robin scheduler.
    If true, use multi-level feedback queue scheduler.
    Controlled by kernel command-line option "-o mlfqs". */
 extern bool thread_mlfqs;
-extern bool ready_to_run;
 
 void thread_init (void);
 void thread_start (void);
@@ -144,11 +145,5 @@ int thread_get_nice (void);
 void thread_set_nice (int);
 int thread_get_recent_cpu (void);
 int thread_get_load_avg (void);
-
-void blocked_thread_check (struct thread *t, void *aux UNUSED);
-bool thread_cmp_priority (const struct list_elem *a, const struct list_elem *b, void *aux UNUSED);
-void thread_mlfqs_increase_recent_cpu_by_one (void);
-void thread_mlfqs_update_priority (struct thread *);
-void thread_mlfqs_update_load_avg_and_recent_cpu (void);
 
 #endif /* threads/thread.h */

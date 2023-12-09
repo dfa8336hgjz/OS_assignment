@@ -17,6 +17,7 @@ int
 main (int argc UNUSED, char *argv[]) 
 {
   test_name = "child-close";
+
   msg ("begin");
   if (!isdigit (*argv[1]))
     fail ("bad command-line arguments");
